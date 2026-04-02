@@ -9,6 +9,12 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -102,6 +108,11 @@
                                 class="ml-2 bg-[#B1CEFA] text-[#000000] px-2 py-0.5 rounded-full text-xs font-black">{{
                                 horariosGenerados.length }}</span>
                         </button>
+                        <button @click="vistaActual = 'directorio'"
+                            :class="vistaActual === 'directorio' ? 'border-[#B1CEFA] text-[#000000] dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'"
+                            class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">
+                            📖 4. Profesores
+                        </button>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
@@ -135,6 +146,9 @@
                     Materias</button>
                 <button @click="seleccionarVista('resultados')"
                     class="block pl-3 pr-4 py-3 text-left w-full font-bold">3. Resultados</button>
+                <button @click="seleccionarVista('directorio')"
+                    class="block pl-3 pr-4 py-3 text-left w-full font-bold">4.
+                    Profesores</button>
             </div>
         </div>
     </nav>
@@ -339,19 +353,27 @@
                     <p class="text-sm">Cada horario contiene como máximo 7 materias para no sobrecargar tu semestre.</p>
                 </div>
 
-                <div v-for="(horario, index) in horariosGenerados" :key="index"
+                <div v-for="(horario, index) in horariosGenerados" :key="index" :id="'horario-' + index"
                     class="border-2 border-[#B1CEFA] rounded-xl overflow-hidden shadow-xl bg-white dark:bg-gray-800">
 
-                    <div class="bg-[#B1CEFA] p-4 flex justify-between items-center text-black">
+                    <div
+                        class="bg-[#B1CEFA] p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center text-black gap-4">
                         <h2 class="text-2xl font-black flex items-center gap-3">
                             <span
                                 class="bg-[#FFFFFF] text-[#000000] border-2 border-[#000000] rounded-full w-10 h-10 flex items-center justify-center shadow-sm">{{
                                 index + 1 }}</span>
                             Horario Opción {{ index + 1 }}
                         </h2>
-                        <button
-                            class="bg-black text-white px-4 py-2 rounded-lg font-bold text-sm shadow hover:opacity-80">📥
-                            Descargar</button>
+                        <div class="flex gap-2">
+                            <button @click="descargarHorario(index, 'png')"
+                                class="bg-black text-white px-4 py-2 rounded-lg font-bold text-sm shadow hover:opacity-80 transition flex items-center gap-2">
+                                🖼️ PNG
+                            </button>
+                            <button @click="descargarHorario(index, 'pdf')"
+                                class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-sm shadow hover:opacity-80 transition flex items-center gap-2">
+                                📄 PDF
+                            </button>
+                        </div>
                     </div>
 
                     <div class="p-6">
@@ -372,31 +394,29 @@
                                 <tbody>
                                     <tr v-for="bloque in obtenerBloquesPorHorario(horario)" :key="bloque.inicio">
                                         <td
-                                            class="border-b border-r-2 border-gray-200 dark:border-gray-700 p-2 text-center font-bold text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900">
+                                            class="border-b border-r-2 border-gray-200 dark:border-gray-700 p-3 text-center font-bold text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 w-24 align-middle">
                                             {{ bloque.inicio }}<br><span class="text-xs font-normal opacity-70">a {{
                                                 bloque.fin }}</span>
                                         </td>
 
-                                        <td v-for="dia in diasSemana" :key="dia"
-                                            class="border-b border-r border-gray-200 dark:border-gray-700 p-0 relative h-[60px]">
-                                            <template v-if="obtenerClaseEnHora(horario, dia, bloque.inicio)">
-                                                <div :class="obtenerColorClase(horario, obtenerClaseEnHora(horario, dia, bloque.inicio))"
-                                                    class="absolute inset-0 flex flex-col justify-center items-center text-center p-1 border-t border-white/20 dark:border-black/20 bloque-clase">
+                                        <template v-for="dia in diasSemana" :key="dia">
+                                            <td v-if="debeRenderizarCelda(horario, dia, bloque.inicio)"
+                                                :rowspan="obtenerRowspan(horario, dia, bloque.inicio)"
+                                                :class="obtenerClaseEnHora(horario, dia, bloque.inicio) ? obtenerColorClase(horario, obtenerClaseEnHora(horario, dia, bloque.inicio)) : ''"
+                                                class="border-b border-r border-gray-200 dark:border-gray-700 align-middle text-center p-2 hover:brightness-95 transition-all">
 
-                                                    <template
-                                                        v-if="esInicioDeClase(obtenerClaseEnHora(horario, dia, bloque.inicio), dia, bloque.inicio)">
-                                                        <span
-                                                            class="font-black text-xs text-black leading-tight drop-shadow-sm">{{
-                                                            obtenerClaseEnHora(horario, dia, bloque.inicio).clave
-                                                            }}</span>
-                                                        <span
-                                                            class="text-[10px] text-black/80 font-bold leading-tight line-clamp-2 w-full mt-0.5">{{
-                                                            obtenerClaseEnHora(horario, dia, bloque.inicio).nombre
-                                                            }}</span>
-                                                    </template>
+                                                <div v-if="obtenerClaseEnHora(horario, dia, bloque.inicio)"
+                                                    class="block w-full">
+                                                    <div class="font-black text-sm text-black leading-tight">
+                                                        {{ obtenerClaseEnHora(horario, dia, bloque.inicio).clave }}
+                                                    </div>
+                                                    <div
+                                                        class="text-xs text-black/80 font-bold leading-tight mt-1 break-words whitespace-normal">
+                                                        {{ obtenerClaseEnHora(horario, dia, bloque.inicio).nombre }}
+                                                    </div>
                                                 </div>
-                                            </template>
-                                        </td>
+                                            </td>
+                                        </template>
                                     </tr>
                                 </tbody>
                             </table>
@@ -428,6 +448,81 @@
                 </div>
             </div>
         </div>
+
+        <div v-if="vistaActual === 'directorio'" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-gray-50 dark:bg-gray-800 border-2 border-[#B1CEFA] rounded-xl p-6 shadow-sm">
+                <h2 class="text-xl font-bold mb-4">Calificar a un Profesor</h2>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Nombre del Profesor</label>
+                        <input v-model="nuevoProfeDir.nombre" type="text"
+                            class="w-full border-2 border-gray-300 rounded p-2 focus:ring-2 focus:ring-[#B1CEFA] focus:border-[#B1CEFA] dark:bg-gray-700 dark:border-gray-600 outline-none"
+                            placeholder="Ej. Ing. Juan Pérez">
+                        <p class="text-[10px] text-gray-500 mt-1">El nombre se formateará automáticamente (Ej. "juan
+                            perez" ➔ "Juan Perez").</p>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
+                        <label class="flex justify-between items-center mb-3">
+                            <span class="text-sm font-semibold">Calificación general:</span>
+                            <span
+                                class="text-[#000000] dark:text-white font-black text-xl bg-[#B1CEFA] px-3 py-1 rounded-full border border-[#000000]">⭐
+                                {{ nuevoProfeDir.calificacion }} / 10</span>
+                        </label>
+                        <input v-model.number="nuevoProfeDir.calificacion" type="range" min="0" max="10" step="0.1">
+                    </div>
+                    <div
+                        class="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
+                        <label class="block text-sm font-semibold mb-1">Etiquetas del profe</label>
+                        <p class="text-[10px] text-gray-500 mb-3">Solo letras permitidas. Cero tolerancia a lenguaje
+                            ofensivo.</p>
+                        <div class="flex gap-2 mb-4">
+                            <input v-model.trim="textoNuevaEtiquetaDir" @keyup.enter.prevent="crearEtiquetaDir"
+                                type="text"
+                                class="border-2 border-gray-300 rounded p-2 text-sm flex-grow focus:ring-2 focus:ring-[#B1CEFA] focus:border-[#B1CEFA] dark:bg-gray-800 dark:border-gray-500 outline-none"
+                                placeholder="Ej. Explica muy bien">
+                            <button @click.prevent="crearEtiquetaDir"
+                                class="bg-[#000000] dark:bg-white text-[#FFFFFF] dark:text-black px-4 rounded text-sm font-bold hover:opacity-80 transition-opacity border border-transparent shadow">Agregar</button>
+                        </div>
+                        <div class="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-1 custom-scrollbar">
+                            <button v-for="etiqueta in etiquetasDirectorio" :key="etiqueta"
+                                @click="toggleEtiquetaDir(etiqueta)"
+                                :class="nuevoProfeDir.etiquetas.includes(etiqueta) ? 'bg-[#B1CEFA] text-[#000000] font-black border-2 border-[#000000] shadow-md scale-105' : 'bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-200 border-2 border-transparent hover:bg-gray-200 dark:hover:bg-gray-500'"
+                                class="text-xs px-3 py-1.5 rounded-full transition-all">{{ etiqueta }}</button>
+                        </div>
+                    </div>
+                    <button @click="guardarProfeDir"
+                        class="w-full bg-[#B1CEFA] text-[#000000] font-black py-4 rounded-lg mt-4 hover:bg-blue-300 transition-colors shadow-md border-2 border-[#000000]">+
+                        Agregar al Directorio Global</button>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-bold mb-4">Directorio de Consulta ({{ directorioProfesores.length }})</h2>
+                <div v-if="directorioProfesores.length === 0"
+                    class="text-gray-400 italic text-sm bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-dashed border-gray-300">
+                    Aún no hay profesores en la base de datos.</div>
+
+                <div class="space-y-3 max-h-[700px] overflow-y-auto pr-2 custom-scrollbar">
+                    <div v-for="(prof, index) in directorioProfesores" :key="index"
+                        class="border-2 border-[#000000] dark:border-gray-600 rounded-xl p-4 bg-white dark:bg-gray-800 relative hover:shadow-md transition-shadow">
+                        <button @click="directorioProfesores.splice(index, 1)"
+                            class="absolute top-3 right-3 text-red-500 font-bold px-2 py-1 hover:bg-red-50 dark:hover:bg-gray-700 rounded-full w-8 h-8 flex items-center justify-center">✕</button>
+                        <div class="flex items-center gap-3 mb-2 pr-8">
+                            <p class="font-bold text-xl">{{ prof.nombre }}</p>
+                            <div
+                                class="flex items-center gap-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-black border-2 border-yellow-300 dark:border-yellow-700 shadow-sm">
+                                ⭐ {{ prof.calificacion }}</div>
+                        </div>
+                        <div class="flex gap-1.5 flex-wrap">
+                            <span v-for="tag in prof.etiquetas"
+                                class="bg-[#B1CEFA] text-[#000000] text-[10px] uppercase font-bold px-2 py-1 rounded border border-[#000000] shadow-sm">{{
+                                tag }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <footer class="bg-white dark:bg-gray-900 border-t-4 border-[#B1CEFA] mt-12 py-6 transition-colors shadow-inner">
@@ -453,7 +548,7 @@
 
         createApp({
             setup() {
-                const vistaActual = ref('crear'); // Regresé la vista por defecto a Crear para que veas el botón inmediatamente
+                const vistaActual = ref('crear');
                 const isDark = ref(localStorage.getItem('aulaFree_theme') === 'dark');
                 const menuAbierto = ref(false);
                 const contadorVisitas = ref(0);
@@ -536,6 +631,40 @@
                         listaMaterias.value.push(JSON.parse(JSON.stringify(nuevaMateria.value)));
                         nuevaMateria.value = { clave: '', nombre: '', profesor: '', horarios: [] };
                     } else alert("Asegúrate de llenar Clave, Nombre, seleccionar un Profesor y agregar al menos un horario.");
+                };
+
+                // --- NUEVAS FUNCIONES PARA UNIR CELDAS (ROWSPAN) ---
+                const debeRenderizarCelda = (horario, dia, horaInicioBloque) => {
+                    for (let clase of horario) {
+                        for (let h of clase.horarios) {
+                            if (h.dia === dia) {
+                                const inicioClase = parseInt(h.inicio.split(':')[0]);
+                                const finClase = parseInt(h.fin.split(':')[0]);
+                                const horaActual = parseInt(horaInicioBloque.split(':')[0]);
+
+                                // Si la hora actual está "en medio" de la clase, no dibujamos la celda
+                                // porque la celda inicial ya se estiró hacia abajo para cubrirla
+                                if (horaActual > inicioClase && horaActual < finClase) {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                    return true;
+                };
+
+                const obtenerRowspan = (horario, dia, horaInicioBloque) => {
+                    const clase = obtenerClaseEnHora(horario, dia, horaInicioBloque);
+                    if (!clase) return 1;
+
+                    for (let h of clase.horarios) {
+                        if (h.dia === dia && h.inicio === horaInicioBloque) {
+                            const inicio = parseInt(h.inicio.split(':')[0]);
+                            const fin = parseInt(h.fin.split(':')[0]);
+                            return fin - inicio; // Ej: de 07:00 a 09:00 -> 9 - 7 = Fusiona 2 celdas
+                        }
+                    }
+                    return 1;
                 };
 
                 const obtenerBloquesPorHorario = (horario) => {
@@ -677,6 +806,98 @@
                     } else {
                         alert(`No se pudo armar ningún horario sin empalmes combinando ${tamanoObjetivo} materias. Revisa tus opciones o elimina alguna que choque.`);
                     }
+                }; // <-- Aquí termina generarOpciones
+
+                // --- FUNCIÓN DE DESCARGA (Ahora fuera de generarOpciones) ---
+                // --- FUNCIÓN DE DESCARGA (PNG y PDF) ---
+                const descargarHorario = async (index, formato) => {
+                    const elemento = document.getElementById(`horario-${index}`);
+                    if (!elemento) return;
+
+                    try {
+                        // Ocultamos TODOS los botones temporalmente para la foto
+                        const botones = elemento.querySelectorAll('button');
+                        botones.forEach(btn => btn.style.display = 'none');
+
+                        const canvas = await html2canvas(elemento, {
+                            scale: 2,
+                            backgroundColor: isDark.value ? '#1f2937' : '#ffffff',
+                            useCORS: true
+                        });
+
+                        // Restauramos los botones
+                        botones.forEach(btn => btn.style.display = 'block');
+
+                        if (formato === 'png') {
+                            const enlace = document.createElement('a');
+                            enlace.download = `AulaFree_Horario_${index + 1}.png`;
+                            enlace.href = canvas.toDataURL('image/png');
+                            enlace.click();
+                        } else if (formato === 'pdf') {
+                            // Extraemos jsPDF desde la ventana global
+                            const { jsPDF } = window.jspdf;
+
+                            const imgData = canvas.toDataURL('image/png');
+
+                            // Creamos un PDF con el tamaño EXACTO del canvas generado
+                            // Esto evita que se corte o pierda calidad
+                            const pdf = new jsPDF({
+                                orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
+                                unit: 'px',
+                                format: [canvas.width, canvas.height]
+                            });
+
+                            pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+                            pdf.save(`AulaFree_Horario_${index + 1}.pdf`);
+                        }
+
+                    } catch (error) {
+                        console.error("Error al descargar el horario:", error);
+                        alert("Hubo un problema al generar el archivo.");
+                    }
+
+
+
+                };
+
+                // --- DATOS DEL DIRECTORIO INDEPENDIENTE ---
+                const directorioProfesores = ref(JSON.parse(localStorage.getItem('aulaFree_directorio')) || []);
+                const etiquetasDirectorio = ref(JSON.parse(localStorage.getItem('aulaFree_etiquetasDir')) || ['Mucha tarea', 'Bueno', 'Pesado pero fácil', 'Barco', 'Estricto']);
+                const textoNuevaEtiquetaDir = ref('');
+                const nuevoProfeDir = ref({ nombre: '', calificacion: 5.0, etiquetas: [] });
+
+                watch(directorioProfesores, (val) => localStorage.setItem('aulaFree_directorio', JSON.stringify(val)), { deep: true });
+                watch(etiquetasDirectorio, (val) => localStorage.setItem('aulaFree_etiquetasDir', JSON.stringify(val)), { deep: true });
+
+                const estandarizarNombre = (texto) => {
+                    return texto.trim()
+                        .replace(/\s+/g, ' ')
+                        .toLowerCase()
+                        .replace(/\b\w/g, c => c.toUpperCase());
+                };
+
+                const crearEtiquetaDir = () => {
+                    const tag = textoNuevaEtiquetaDir.value.trim();
+                    if (tag !== '' && !etiquetasDirectorio.value.includes(tag)) etiquetasDirectorio.value.push(tag);
+                    textoNuevaEtiquetaDir.value = '';
+                };
+
+                const toggleEtiquetaDir = (etiqueta) => {
+                    const index = nuevoProfeDir.value.etiquetas.indexOf(etiqueta);
+                    if (index === -1) nuevoProfeDir.value.etiquetas.push(etiqueta);
+                    else nuevoProfeDir.value.etiquetas.splice(index, 1);
+                };
+
+                const guardarProfeDir = () => {
+                    if (nuevoProfeDir.value.nombre.trim() !== '') {
+                        const nombreEstandarizado = estandarizarNombre(nuevoProfeDir.value.nombre);
+                        const profeAGuardar = {
+                            ...nuevoProfeDir.value,
+                            nombre: nombreEstandarizado
+                        };
+                        directorioProfesores.value.push(JSON.parse(JSON.stringify(profeAGuardar)));
+                        nuevoProfeDir.value = { nombre: '', calificacion: 5.0, etiquetas: [] };
+                    } else alert("Por favor ingresa el nombre del profesor.");
                 };
 
                 return {
@@ -686,7 +907,12 @@
                     nuevoProfesor, nuevaMateria, nuevoHorario,
                     seleccionarVista, toggleDarkMode, crearEtiqueta, toggleEtiquetaProfesor, guardarProfesor,
                     agregarHorario, guardarMateria, generarOpciones,
-                    obtenerBloquesPorHorario, obtenerClaseEnHora, esInicioDeClase, obtenerColorClase, obtenerColorBorde
+                    obtenerBloquesPorHorario, obtenerClaseEnHora, esInicioDeClase, obtenerColorClase, obtenerColorBorde,
+                    descargarHorario, debeRenderizarCelda, obtenerRowspan,
+
+                    // Variables del directorio
+                    directorioProfesores, etiquetasDirectorio, textoNuevaEtiquetaDir, nuevoProfeDir,
+                    crearEtiquetaDir, toggleEtiquetaDir, guardarProfeDir
                 }
             }
         }).mount('#app');
