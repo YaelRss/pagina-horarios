@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="es" class="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AulaFree - Generador de Horarios</title>
     <meta name="theme-color" content="#B1CEFA">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
@@ -15,107 +14,199 @@
             darkMode: 'class',
         }
     </script>
-</head>
-<body class="bg-[#FFFFFF] dark:bg-gray-900 text-[#000000] dark:text-white font-sans antialiased transition-colors duration-300 flex flex-col min-h-screen" id="app">
 
-    <nav class="bg-[#FFFFFF] dark:bg-gray-900 border-b-4 border-[#B1CEFA] sticky top-0 z-50 shadow-sm transition-colors duration-300">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #B1CEFA;
+            border-radius: 10px;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #B1CEFA;
+            cursor: pointer;
+            margin-top: -6px;
+            border: 2px solid #000000;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #e2e8f0;
+            border-radius: 4px;
+            border: 1px solid #94a3b8;
+        }
+
+        .dark input[type=range]::-webkit-slider-runnable-track {
+            background: #334155;
+            border: 1px solid #000000;
+        }
+
+        .bloque-clase {
+            transition: all 0.2s ease;
+        }
+
+        .bloque-clase:hover {
+            filter: brightness(0.95);
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-[#FFFFFF] dark:bg-gray-900 text-[#000000] dark:text-white font-sans antialiased transition-colors duration-300 flex flex-col min-h-screen"
+    id="app">
+
+    <nav
+        class="bg-[#FFFFFF] dark:bg-gray-900 border-b-4 border-[#B1CEFA] sticky top-0 z-50 shadow-sm transition-colors duration-300">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
-                        <span class="font-extrabold text-2xl tracking-tight">Aula<span class="text-[#B1CEFA]">Free</span></span>
+                        <span class="font-extrabold text-2xl tracking-tight">Aula<span
+                                class="text-[#B1CEFA]">Free</span></span>
                     </div>
-                    
                     <div class="hidden sm:ml-8 sm:flex sm:space-x-8">
-                        <button @click="vistaActual = 'profesores'" 
-                                :class="vistaActual === 'profesores' ? 'border-[#B1CEFA] text-[#000000] dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'"
-                                class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">
-                            🧑‍🏫 1. Profesores
-                        </button>
-                        <button @click="vistaActual = 'crear'" 
-                                :class="vistaActual === 'crear' ? 'border-[#B1CEFA] text-[#000000] dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'"
-                                class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">
-                            📚 2. Materias
-                        </button>
-                        <button @click="vistaActual = 'resultados'" 
-                                :class="vistaActual === 'resultados' ? 'border-[#B1CEFA] text-[#000000] dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'"
-                                class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">
-                            🗓️ 3. Resultados 
-                            <span class="ml-2 bg-[#B1CEFA] text-[#000000] px-2 py-0.5 rounded-full text-xs font-black">{{ horariosGenerados.length }}</span>
+                        <button @click="vistaActual = 'profesores'"
+                            :class="vistaActual === 'profesores' ? 'border-[#B1CEFA] text-[#000000] dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'"
+                            class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">🧑‍🏫
+                            1. Profesores</button>
+                        <button @click="vistaActual = 'crear'"
+                            :class="vistaActual === 'crear' ? 'border-[#B1CEFA] text-[#000000] dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'"
+                            class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">📚
+                            2. Materias</button>
+                        <button @click="vistaActual = 'resultados'"
+                            :class="vistaActual === 'resultados' ? 'border-[#B1CEFA] text-[#000000] dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'"
+                            class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">
+                            🗓️ 3. Resultados
+                            <span
+                                class="ml-2 bg-[#B1CEFA] text-[#000000] px-2 py-0.5 rounded-full text-xs font-black">{{
+                                horariosGenerados.length }}</span>
                         </button>
                     </div>
                 </div>
-
-                <div class="flex items-center">
-                    <button @click="toggleDarkMode" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition text-xl">
-                        {{ isDark ? '☀️' : '🌓' }}
-                    </button>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">☀️</span>
+                        <button @click="toggleDarkMode" :class="isDark ? 'bg-[#000000]' : 'bg-[#B1CEFA]'"
+                            class="relative inline-flex h-7 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border-2 border-[#000000] dark:border-white">
+                            <span :class="isDark ? 'translate-x-7 bg-[#B1CEFA]' : 'translate-x-1 bg-[#FFFFFF]'"
+                                class="inline-block h-5 w-5 transform rounded-full transition-transform duration-300 shadow"></span>
+                        </button>
+                        <span class="text-lg">🌙</span>
+                    </div>
                     <div class="flex items-center sm:hidden ml-2">
                         <button @click="menuAbierto = !menuAbierto" class="text-gray-500 focus:outline-none">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path v-if="!menuAbierto" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                                <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path v-if="!menuAbierto" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-
         <div v-show="menuAbierto" class="sm:hidden bg-white dark:bg-gray-900 border-t dark:border-gray-700">
             <div class="pt-2 pb-3 space-y-1">
-                <button @click="seleccionarVista('profesores')" class="block pl-3 pr-4 py-3 text-left w-full font-bold">1. Profesores</button>
-                <button @click="seleccionarVista('crear')" class="block pl-3 pr-4 py-3 text-left w-full font-bold">2. Materias</button>
-                <button @click="seleccionarVista('resultados')" class="block pl-3 pr-4 py-3 text-left w-full font-bold">3. Resultados</button>
+                <button @click="seleccionarVista('profesores')"
+                    class="block pl-3 pr-4 py-3 text-left w-full font-bold">1. Profesores</button>
+                <button @click="seleccionarVista('crear')" class="block pl-3 pr-4 py-3 text-left w-full font-bold">2.
+                    Materias</button>
+                <button @click="seleccionarVista('resultados')"
+                    class="block pl-3 pr-4 py-3 text-left w-full font-bold">3. Resultados</button>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto p-6 mt-4 flex-grow w-full">
-        
+    <main class="max-w-6xl mx-auto p-6 mt-4 flex-grow w-full">
+
         <div v-if="vistaActual === 'profesores'" class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="bg-gray-50 dark:bg-gray-800 border-2 border-[#B1CEFA] rounded-xl p-6 shadow-sm">
-                <h2 class="text-xl font-bold mb-4">Agregar Profesor y Etiquetas</h2>
-                
-                <div class="space-y-4">
+                <h2 class="text-xl font-bold mb-4">Agregar Profesor</h2>
+                <div class="space-y-6">
                     <div>
                         <label class="block text-sm font-semibold mb-1">Nombre del Profesor</label>
-                        <input v-model="nuevoProfesor.nombre" type="text" class="w-full border rounded p-2 focus:ring-2 focus:ring-[#B1CEFA] dark:bg-gray-700 dark:border-gray-600" placeholder="Ej. Ing. García">
+                        <input v-model="nuevoProfesor.nombre" type="text"
+                            class="w-full border-2 border-gray-300 rounded p-2 focus:ring-2 focus:ring-[#B1CEFA] focus:border-[#B1CEFA] dark:bg-gray-700 dark:border-gray-600 outline-none"
+                            placeholder="Ej. Ing. García">
                     </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">Opinión / Etiquetas (Califica al profe)</label>
-                        <div class="flex flex-wrap gap-2">
-                            <button v-for="etiqueta in opcionesEtiquetas" :key="etiqueta" 
-                                    @click="toggleEtiquetaProfesor(etiqueta)"
-                                    :class="nuevoProfesor.etiquetas.includes(etiqueta) ? 'bg-[#000000] text-[#FFFFFF] dark:bg-white dark:text-black shadow-md' : 'bg-[#B1CEFA] text-[#000000] hover:bg-blue-300'"
-                                    class="text-xs font-bold px-3 py-1 rounded-full transition-all">
-                                {{ etiqueta }}
-                            </button>
+                    <div
+                        class="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
+                        <label class="flex justify-between items-center mb-3">
+                            <span class="text-sm font-semibold">Calificación general:</span>
+                            <span
+                                class="text-[#000000] dark:text-white font-black text-xl bg-[#B1CEFA] px-3 py-1 rounded-full border border-[#000000]">⭐
+                                {{ nuevoProfesor.calificacion }} / 10</span>
+                        </label>
+                        <input v-model.number="nuevoProfesor.calificacion" type="range" min="0" max="10" step="0.1">
+                    </div>
+                    <div
+                        class="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
+                        <label class="block text-sm font-semibold mb-2">Etiquetas del profe</label>
+                        <div class="flex gap-2 mb-4">
+                            <input v-model.trim="textoNuevaEtiqueta" @keyup.enter.prevent="crearEtiqueta" type="text"
+                                class="border-2 border-gray-300 rounded p-2 text-sm flex-grow focus:ring-2 focus:ring-[#B1CEFA] focus:border-[#B1CEFA] dark:bg-gray-800 dark:border-gray-500 outline-none"
+                                placeholder="Escribe y presiona Enter...">
+                            <button @click.prevent="crearEtiqueta"
+                                class="bg-[#000000] dark:bg-white text-[#FFFFFF] dark:text-black px-4 rounded text-sm font-bold hover:opacity-80 transition-opacity border border-transparent shadow">Agregar</button>
+                        </div>
+                        <div class="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-1 custom-scrollbar">
+                            <button v-for="etiqueta in opcionesEtiquetas" :key="etiqueta"
+                                @click="toggleEtiquetaProfesor(etiqueta)"
+                                :class="nuevoProfesor.etiquetas.includes(etiqueta) ? 'bg-[#B1CEFA] text-[#000000] font-black border-2 border-[#000000] shadow-md scale-105' : 'bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-200 border-2 border-transparent hover:bg-gray-200 dark:hover:bg-gray-500'"
+                                class="text-xs px-3 py-1.5 rounded-full transition-all">{{ etiqueta }}</button>
                         </div>
                     </div>
-
-                    <button @click="guardarProfesor" class="w-full bg-[#000000] dark:bg-white text-[#FFFFFF] dark:text-black font-bold py-3 rounded-lg mt-4 hover:opacity-80 transition-opacity">
-                        + Guardar Profesor
-                    </button>
+                    <button @click="guardarProfesor"
+                        class="w-full bg-[#B1CEFA] text-[#000000] font-black py-4 rounded-lg mt-4 hover:bg-blue-300 transition-colors shadow-md border-2 border-[#000000]">+
+                        Guardar Profesor en Directorio</button>
                 </div>
             </div>
 
             <div>
                 <h2 class="text-xl font-bold mb-4">Directorio de Profesores ({{ listaProfesores.length }})</h2>
-                <div v-if="listaProfesores.length === 0" class="text-gray-400 italic text-sm">No hay profesores registrados.</div>
-                
-                <div class="space-y-3">
-                    <div v-for="(prof, index) in listaProfesores" :key="index" class="border border-gray-300 dark:border-gray-700 rounded-lg p-3 bg-white dark:bg-gray-800 flex justify-between items-center">
-                        <div>
-                            <p class="font-bold text-lg">{{ prof.nombre }}</p>
+                <div v-if="listaProfesores.length === 0"
+                    class="text-gray-400 italic text-sm bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-dashed border-gray-300">
+                    Aún no hay profesores. Agrega uno en el panel izquierdo.</div>
+
+                <div class="space-y-2 max-h-[700px] overflow-y-auto pr-2 custom-scrollbar">
+                    <div v-for="(prof, index) in listaProfesores" :key="index"
+                        class="border-2 border-[#000000] dark:border-gray-600 rounded-lg p-2.5 bg-white dark:bg-gray-800 relative hover:shadow-sm transition-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div class="pr-6">
+                            <div class="flex items-center gap-2">
+                                <p class="font-bold text-sm">{{ prof.nombre }}</p>
+                                <span class="text-xs font-black text-yellow-600 dark:text-yellow-400">⭐ {{
+                                    prof.calificacion }}</span>
+                            </div>
                             <div class="flex gap-1 mt-1 flex-wrap">
-                                <span v-for="tag in prof.etiquetas" class="bg-[#B1CEFA] text-[#000000] text-[10px] uppercase font-bold px-2 py-0.5 rounded">
-                                    {{ tag }}
-                                </span>
+                                <span v-for="tag in prof.etiquetas"
+                                    class="bg-[#B1CEFA] text-[#000000] text-[9px] uppercase font-bold px-1.5 py-0.5 rounded border border-[#000000] shadow-sm">{{
+                                    tag }}</span>
                             </div>
                         </div>
-                        <button @click="listaProfesores.splice(index, 1)" class="text-red-500 font-bold px-2 py-1 hover:bg-red-50 rounded">✕</button>
+                        <button @click="listaProfesores.splice(index, 1)"
+                            class="absolute top-1 right-1 text-red-500 font-bold px-1 py-0.5 hover:bg-red-50 dark:hover:bg-gray-700 rounded-md text-xs">✕</button>
                     </div>
                 </div>
             </div>
@@ -124,181 +215,283 @@
         <div v-if="vistaActual === 'crear'" class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="bg-gray-50 dark:bg-gray-800 border-2 border-[#B1CEFA] rounded-xl p-6 shadow-sm">
                 <h2 class="text-xl font-bold mb-2">Crear Opción de Materia</h2>
-                <p class="text-xs mb-4 text-gray-500">Añade los días y horas exactas en las que se imparte esta opción.</p>
-                
                 <div class="space-y-4">
                     <div class="flex flex-col sm:flex-row gap-4">
                         <div class="w-full sm:w-1/3">
                             <label class="block text-sm font-semibold mb-1">Clave</label>
-                            <input v-model="nuevaMateria.clave" type="text" class="w-full border rounded p-2 focus:ring-2 focus:ring-[#B1CEFA] dark:bg-gray-700 dark:border-gray-600" placeholder="Ej. MAT01">
+                            <input v-model="nuevaMateria.clave" type="text"
+                                class="w-full border-2 border-gray-300 rounded p-2 focus:ring-2 focus:ring-[#B1CEFA] focus:border-[#B1CEFA] dark:bg-gray-700 dark:border-gray-600 outline-none"
+                                placeholder="Ej. MAT01">
                         </div>
                         <div class="w-full sm:w-2/3">
-                            <label class="block text-sm font-semibold mb-1">Nombre de Materia</label>
-                            <input v-model="nuevaMateria.nombre" type="text" class="w-full border rounded p-2 focus:ring-2 focus:ring-[#B1CEFA] dark:bg-gray-700 dark:border-gray-600" placeholder="Ej. Álgebra">
+                            <label class="block text-sm font-semibold mb-1">Nombre</label>
+                            <input v-model="nuevaMateria.nombre" type="text"
+                                class="w-full border-2 border-gray-300 rounded p-2 focus:ring-2 focus:ring-[#B1CEFA] focus:border-[#B1CEFA] dark:bg-gray-700 dark:border-gray-600 outline-none"
+                                placeholder="Ej. Álgebra">
                         </div>
                     </div>
-
                     <div>
                         <label class="block text-sm font-semibold mb-1">Profesor Asignado</label>
-                        <select v-model="nuevaMateria.profesor" class="w-full border rounded p-2 dark:bg-gray-700 dark:border-gray-600">
+                        <select v-model="nuevaMateria.profesor"
+                            class="w-full border-2 border-gray-300 rounded p-2 dark:bg-gray-700 dark:border-gray-600 outline-none focus:ring-2 focus:ring-[#B1CEFA] focus:border-[#B1CEFA]">
                             <option value="" disabled>Selecciona un profesor...</option>
-                            <option v-for="prof in listaProfesores" :value="prof">{{ prof.nombre }}</option>
+                            <option v-for="prof in listaProfesores" :value="prof">{{ prof.nombre }} (⭐{{
+                                prof.calificacion }})</option>
                         </select>
-                        <p v-if="listaProfesores.length === 0" class="text-xs text-red-500 mt-1">⚠️ Primero agrega profesores en la pestaña "1. Profesores".</p>
+                        <p v-if="listaProfesores.length === 0" class="text-xs text-red-500 mt-1 font-bold">⚠️ Primero
+                            agrega profesores en la pestaña "1. Profesores".</p>
                     </div>
-
-                    <hr class="border-[#B1CEFA] my-4">
-
+                    <hr class="border-[#B1CEFA] my-4 border-t-2">
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Días y Horarios de esta opción</label>
-                        <div class="flex flex-wrap gap-2 mb-2 items-center">
-                            <select v-model="nuevoHorario.dia" class="border rounded p-2 text-sm dark:bg-gray-700 dark:border-gray-600 flex-grow">
-                                <option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option><option>Sábado</option>
+                        <label class="block text-sm font-semibold mb-2">Días y Horarios</label>
+                        <div
+                            class="flex flex-wrap gap-2 mb-3 items-center bg-white dark:bg-gray-700 p-3 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
+                            <select v-model="nuevoHorario.dia"
+                                class="border border-gray-300 rounded p-2 text-sm dark:bg-gray-800 dark:border-gray-500 flex-grow">
+                                <option>Lunes</option>
+                                <option>Martes</option>
+                                <option>Miércoles</option>
+                                <option>Jueves</option>
+                                <option>Viernes</option>
+                                <option>Sábado</option>
                             </select>
-                            
-                            <select v-model="nuevoHorario.inicio" class="border rounded p-2 text-sm dark:bg-gray-700 dark:border-gray-600">
+                            <select v-model="nuevoHorario.inicio"
+                                class="border border-gray-300 rounded p-2 text-sm dark:bg-gray-800 dark:border-gray-500">
                                 <option value="" disabled>Inicio</option>
                                 <option v-for="hora in horasDisponibles" :value="hora">{{ hora }}</option>
                             </select>
-                            <span>a</span>
-                            <select v-model="nuevoHorario.fin" class="border rounded p-2 text-sm dark:bg-gray-700 dark:border-gray-600">
+                            <span class="font-bold">a</span>
+                            <select v-model="nuevoHorario.fin"
+                                class="border border-gray-300 rounded p-2 text-sm dark:bg-gray-800 dark:border-gray-500">
                                 <option value="" disabled>Fin</option>
                                 <option v-for="hora in horasDisponibles" :value="hora">{{ hora }}</option>
                             </select>
-                            
-                            <button @click="agregarHorario" class="bg-[#B1CEFA] text-[#000000] px-4 py-2 rounded font-extrabold hover:bg-blue-300 transition-colors">+</button>
+                            <button @click="agregarHorario"
+                                class="bg-[#B1CEFA] text-[#000000] px-4 py-2 rounded font-extrabold hover:bg-blue-300 transition-colors border border-[#000000] shadow">+</button>
                         </div>
-                        
-                        <ul class="text-sm space-y-2 mt-3">
-                            <li v-for="(h, index) in nuevaMateria.horarios" :key="index" class="bg-white dark:bg-gray-700 border dark:border-gray-600 rounded p-2 flex justify-between items-center shadow-sm">
-                                <span class="font-medium">✅ {{ h.dia }}: {{ h.inicio }} - {{ h.fin }}</span>
-                                <button @click="nuevaMateria.horarios.splice(index, 1)" class="text-red-500 font-bold">✕</button>
+                        <ul class="text-sm space-y-2">
+                            <li v-for="(h, index) in nuevaMateria.horarios" :key="index"
+                                class="bg-white dark:bg-gray-700 border-2 border-green-500 dark:border-green-600 rounded p-2 flex justify-between items-center shadow-sm">
+                                <span class="font-bold text-green-700 dark:text-green-400">✅ {{ h.dia }}: {{ h.inicio }}
+                                    - {{ h.fin }}</span>
+                                <button @click="nuevaMateria.horarios.splice(index, 1)"
+                                    class="text-red-500 hover:bg-red-50 dark:hover:bg-gray-600 rounded-full w-6 h-6 flex items-center justify-center font-bold transition-colors">✕</button>
                             </li>
                         </ul>
                     </div>
-
-                    <button @click="guardarMateria" class="w-full bg-[#000000] dark:bg-white text-[#FFFFFF] dark:text-black font-bold py-3 rounded-lg mt-4 hover:opacity-80 transition-opacity">
-                        + Guardar Opción en el Banco
-                    </button>
+                    <button @click="guardarMateria"
+                        class="w-full bg-[#000000] dark:bg-white text-[#FFFFFF] dark:text-black font-bold py-3 rounded-lg mt-4 hover:opacity-80 transition-opacity">+
+                        Guardar Opción en el Banco</button>
                 </div>
             </div>
 
             <div>
-                <h2 class="text-xl font-bold mb-4">Banco de Opciones ({{ listaMaterias.length }})</h2>
-                
-                <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                    <div v-for="(materia, index) in listaMaterias" :key="index" class="border-2 border-[#000000] dark:border-gray-600 rounded-xl p-4 relative bg-white dark:bg-gray-800">
-                        <button @click="listaMaterias.splice(index, 1)" class="absolute top-2 right-2 text-red-500 font-bold">✕</button>
-                        
-                        <h3 class="font-bold text-lg text-[#B1CEFA]">{{ materia.clave }} <span class="text-[#000000] dark:text-white">- {{ materia.nombre }}</span></h3>
-                        
-                        <div class="mt-2 flex items-center gap-2">
-                            <p class="text-sm font-bold bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded inline-block">🧑‍🏫 {{ materia.profesor.nombre }}</p>
-                            <div class="flex gap-1">
-                                <span v-for="tag in materia.profesor.etiquetas" class="bg-[#B1CEFA] text-[#000000] text-[10px] uppercase font-bold px-1.5 py-0.5 rounded">
-                                    {{ tag }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="mt-3 bg-gray-50 dark:bg-gray-700 rounded p-2 border border-dashed border-gray-300 dark:border-gray-600">
-                            <p class="text-xs font-bold mb-1 text-gray-500 dark:text-gray-400">Horarios de esta opción:</p>
-                            <ul class="text-sm space-y-1">
-                                <li v-for="h in materia.horarios">🗓️ {{ h.dia }} de {{ h.inicio }} a {{ h.fin }}</li>
-                            </ul>
-                        </div>
-                    </div>
+                <div
+                    class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3 border-b-2 border-gray-100 dark:border-gray-800 pb-3">
+                    <h2 class="text-xl font-bold">Banco de Opciones ({{ listaMaterias.length }})</h2>
+                    <button v-if="listaMaterias.length > 0" @click="generarOpciones"
+                        class="bg-[#B1CEFA] text-[#000000] font-black text-sm px-4 py-2 rounded-lg shadow-md hover:bg-blue-300 border-2 border-[#000000] transform hover:-translate-y-0.5 transition-all w-full sm:w-auto">
+                        ⚡ GENERAR
+                    </button>
                 </div>
 
-                <button v-if="listaMaterias.length > 0" @click="generarOpciones" class="w-full bg-[#B1CEFA] text-[#000000] font-extrabold text-lg py-4 rounded-xl mt-6 shadow-lg hover:bg-blue-300 transform hover:-translate-y-1 transition-all">
-                    ⚡ GENERAR HORARIOS SIN EMPALMES
-                </button>
+                <p v-if="listaMaterias.length > 0" class="text-xs text-gray-500 dark:text-gray-400 mb-3 italic">Máximo 7
+                    materias por horario generado.</p>
+
+                <div class="space-y-2 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                    <div v-for="(materia, index) in listaMaterias" :key="index"
+                        class="border-2 border-[#000000] dark:border-gray-600 rounded-lg p-3 relative bg-white dark:bg-gray-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+
+                        <div class="flex-grow pr-6">
+                            <h3 class="font-bold text-sm text-[#B1CEFA]">{{ materia.clave }} <span
+                                    class="text-[#000000] dark:text-white">- {{ materia.nombre }}</span></h3>
+                            <p class="text-xs font-bold text-gray-600 dark:text-gray-400 mt-0.5">🧑‍🏫 {{
+                                materia.profesor.nombre }} <span class="text-yellow-600 dark:text-yellow-400">⭐{{
+                                    materia.profesor.calificacion }}</span></p>
+                        </div>
+
+                        <div class="flex flex-wrap gap-1 sm:justify-end">
+                            <span v-for="h in materia.horarios"
+                                class="text-[10px] font-bold bg-blue-50 dark:bg-gray-700 border border-[#B1CEFA] dark:border-gray-600 px-1.5 py-0.5 rounded text-gray-700 dark:text-gray-200">
+                                {{ h.dia.substring(0,2) }}: {{ h.inicio }}-{{ h.fin }}
+                            </span>
+                        </div>
+
+                        <button @click="listaMaterias.splice(index, 1)"
+                            class="absolute top-1 right-1 text-red-500 font-bold hover:bg-red-50 dark:hover:bg-gray-700 rounded-full w-6 h-6 flex items-center justify-center text-xs">✕</button>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div v-if="vistaActual === 'resultados'">
-            <div v-if="horariosGenerados.length === 0" class="text-center py-16 px-4">
+            <div v-if="horariosGenerados.length === 0"
+                class="text-center py-16 px-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border-2 border-dashed border-[#B1CEFA]">
                 <div class="text-6xl mb-4">🗓️</div>
                 <h2 class="text-2xl font-bold mb-2">Aún no hay horarios</h2>
-                <p class="text-gray-500">Agrega materias y presiona Generar.</p>
+                <p class="text-gray-500">Agrega materias en la pestaña anterior y presiona Generar.</p>
             </div>
-            
-            <div v-else class="space-y-8">
-                <div v-for="(horario, index) in horariosGenerados" :key="index" class="border-2 border-[#B1CEFA] rounded-xl p-6 shadow-md dark:bg-gray-800">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-black flex items-center gap-2">
-                            <span class="bg-[#B1CEFA] text-[#000000] rounded-full w-8 h-8 flex items-center justify-center">{{ index + 1 }}</span>
-                            Opción de Horario
+
+            <div v-else class="space-y-12">
+                <div
+                    class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded dark:bg-green-900 dark:text-green-200 shadow-sm">
+                    <p class="font-bold">¡Éxito! Se encontraron {{ horariosGenerados.length }} opciones viables.</p>
+                    <p class="text-sm">Cada horario contiene como máximo 7 materias para no sobrecargar tu semestre.</p>
+                </div>
+
+                <div v-for="(horario, index) in horariosGenerados" :key="index"
+                    class="border-2 border-[#B1CEFA] rounded-xl overflow-hidden shadow-xl bg-white dark:bg-gray-800">
+
+                    <div class="bg-[#B1CEFA] p-4 flex justify-between items-center text-black">
+                        <h2 class="text-2xl font-black flex items-center gap-3">
+                            <span
+                                class="bg-[#FFFFFF] text-[#000000] border-2 border-[#000000] rounded-full w-10 h-10 flex items-center justify-center shadow-sm">{{
+                                index + 1 }}</span>
+                            Horario Opción {{ index + 1 }}
                         </h2>
+                        <button
+                            class="bg-black text-white px-4 py-2 rounded-lg font-bold text-sm shadow hover:opacity-80">📥
+                            Descargar</button>
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div v-for="clase in horario" class="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
-                            <h3 class="font-bold text-[#B1CEFA]">{{ clase.clave }} <span class="text-[#000000] dark:text-white">- {{ clase.nombre }}</span></h3>
-                            <p class="text-sm font-bold mt-1">🧑‍🏫 {{ clase.profesor.nombre }}</p>
-                            <div class="mt-3 space-y-1">
-                                <p v-for="h in clase.horarios" class="text-xs font-medium bg-gray-50 dark:bg-gray-800 py-1 px-2 rounded border border-gray-100 dark:border-gray-600">
-                                    ⏰ {{ h.dia }}: {{ h.inicio }} - {{ h.fin }}
-                                </p>
+
+                    <div class="p-6">
+                        <div
+                            class="overflow-x-auto custom-scrollbar border-2 border-gray-200 dark:border-gray-700 rounded-lg">
+                            <table class="w-full min-w-[800px] border-collapse bg-white dark:bg-gray-800 text-sm">
+                                <thead>
+                                    <tr>
+                                        <th
+                                            class="border-b-2 border-r-2 border-gray-200 dark:border-gray-700 p-3 bg-gray-50 dark:bg-gray-900 w-24">
+                                            Hora</th>
+                                        <th v-for="dia in diasSemana" :key="dia"
+                                            class="border-b-2 border-r border-gray-200 dark:border-gray-700 p-3 bg-gray-50 dark:bg-gray-900 font-black text-center w-32">
+                                            {{ dia }}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="bloque in obtenerBloquesPorHorario(horario)" :key="bloque.inicio">
+                                        <td
+                                            class="border-b border-r-2 border-gray-200 dark:border-gray-700 p-2 text-center font-bold text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900">
+                                            {{ bloque.inicio }}<br><span class="text-xs font-normal opacity-70">a {{
+                                                bloque.fin }}</span>
+                                        </td>
+
+                                        <td v-for="dia in diasSemana" :key="dia"
+                                            class="border-b border-r border-gray-200 dark:border-gray-700 p-0 relative h-[60px]">
+                                            <template v-if="obtenerClaseEnHora(horario, dia, bloque.inicio)">
+                                                <div :class="obtenerColorClase(horario, obtenerClaseEnHora(horario, dia, bloque.inicio))"
+                                                    class="absolute inset-0 flex flex-col justify-center items-center text-center p-1 border-t border-white/20 dark:border-black/20 bloque-clase">
+
+                                                    <template
+                                                        v-if="esInicioDeClase(obtenerClaseEnHora(horario, dia, bloque.inicio), dia, bloque.inicio)">
+                                                        <span
+                                                            class="font-black text-xs text-black leading-tight drop-shadow-sm">{{
+                                                            obtenerClaseEnHora(horario, dia, bloque.inicio).clave
+                                                            }}</span>
+                                                        <span
+                                                            class="text-[10px] text-black/80 font-bold leading-tight line-clamp-2 w-full mt-0.5">{{
+                                                            obtenerClaseEnHora(horario, dia, bloque.inicio).nombre
+                                                            }}</span>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-8">
+                            <h3 class="text-lg font-black mb-4 border-b-2 border-gray-100 dark:border-gray-700 pb-2">📚
+                                Detalles de las Clases ({{ horario.length }})</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div v-for="clase in horario"
+                                    class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border-l-4 shadow-sm"
+                                    :class="obtenerColorBorde(horario, clase)">
+                                    <h4 class="font-black text-lg">{{ clase.clave }} <span
+                                            class="text-gray-700 dark:text-gray-300 text-sm font-normal">- {{
+                                            clase.nombre }}</span></h4>
+                                    <p class="text-sm font-bold mt-2">🧑‍🏫 {{ clase.profesor.nombre }} <span
+                                            class="text-yellow-600 dark:text-yellow-400">⭐{{ clase.profesor.calificacion
+                                            }}</span></p>
+                                    <div class="flex gap-1 mt-2 flex-wrap">
+                                        <span v-for="tag in clase.profesor.etiquetas"
+                                            class="bg-gray-200 dark:bg-gray-600 text-xs font-bold px-1.5 py-0.5 rounded text-gray-700 dark:text-gray-300">{{
+                                            tag }}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer class="bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 mt-12 py-6 transition-colors">
-        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 dark:text-gray-400">
-            <div class="mb-4 md:mb-0">
-                <p class="font-bold text-gray-700 dark:text-gray-300">AulaFree © 2026</p>
-                <p>Generador de horarios sin complicaciones.</p>
+    <footer class="bg-white dark:bg-gray-900 border-t-4 border-[#B1CEFA] mt-12 py-6 transition-colors shadow-inner">
+        <div
+            class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm text-gray-600 dark:text-gray-400">
+            <div class="mb-4 md:mb-0 text-center md:text-left">
+                <p class="font-black text-lg text-[#000000] dark:text-white mb-1">Aula<span
+                        class="text-[#B1CEFA]">Free</span> © 2026</p>
+                <p class="font-medium">Generador de horarios rápido y sin complicaciones.</p>
             </div>
-            
-            <div class="flex items-center gap-2 bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-sm border border-gray-200 dark:border-gray-700">
-                <span>👁️ Visitas totales:</span>
-                <span class="font-bold text-[#000000] dark:text-white bg-[#B1CEFA] px-2 rounded-full">{{ contadorVisitas }}</span>
+            <div
+                class="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 px-4 py-2 rounded-full border-2 border-gray-200 dark:border-gray-700">
+                <span class="font-bold">👁️ Visitas:</span>
+                <span
+                    class="font-black text-[#000000] dark:text-white bg-[#B1CEFA] px-3 py-0.5 rounded-full border border-[#000000]">{{
+                    contadorVisitas }}</span>
             </div>
         </div>
     </footer>
 
     <script>
-        // Agregamos 'watch' a la importación de Vue
         const { createApp, ref, onMounted, watch } = Vue;
 
         createApp({
             setup() {
-                const vistaActual = ref('profesores');
-                const isDark = ref(false);
+                const vistaActual = ref('crear'); // Regresé la vista por defecto a Crear para que veas el botón inmediatamente
+                const isDark = ref(localStorage.getItem('aulaFree_theme') === 'dark');
                 const menuAbierto = ref(false);
                 const contadorVisitas = ref(0);
-                
-                // DATOS: Intentamos cargar desde localStorage primero, si no hay nada, iniciamos vacío []
+
                 const listaProfesores = ref(JSON.parse(localStorage.getItem('aulaFree_profesores')) || []);
                 const listaMaterias = ref(JSON.parse(localStorage.getItem('aulaFree_materias')) || []);
                 const horariosGenerados = ref([]);
-                
-                // MAGIA DE LOCALSTORAGE: Observamos cambios en los arreglos y los guardamos automáticamente
-                watch(listaProfesores, (nuevoValor) => {
-                    localStorage.setItem('aulaFree_profesores', JSON.stringify(nuevoValor));
-                }, { deep: true }); // deep: true detecta si agregas o eliminas elementos internos
 
-                watch(listaMaterias, (nuevoValor) => {
-                    localStorage.setItem('aulaFree_materias', JSON.stringify(nuevoValor));
-                }, { deep: true });
+                const etiquetasPorDefecto = ['Mucha tarea', 'Bueno', 'Pesado pero fácil', 'Barco', 'Estricto'];
+                const opcionesEtiquetas = ref(JSON.parse(localStorage.getItem('aulaFree_etiquetas')) || etiquetasPorDefecto);
+                const textoNuevaEtiqueta = ref('');
 
-                const horasDisponibles = Array.from({length: 16}, (_, i) => {
+                const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+
+                const horasDisponibles = Array.from({ length: 16 }, (_, i) => {
                     const hora = i + 7;
                     return `${hora < 10 ? '0' : ''}${hora}:00`;
                 });
 
-                const opcionesEtiquetas = ['Mucha tarea', 'Bueno', 'Pesado pero fácil', 'Barco', 'Estricto', 'Falta mucho'];
+                const paletaClases = ['bg-[#B1CEFA]', 'bg-green-200', 'bg-yellow-200', 'bg-purple-200', 'bg-pink-200', 'bg-teal-200', 'bg-orange-200', 'bg-indigo-200'];
+                const paletaBordes = ['border-[#B1CEFA]', 'border-green-400', 'border-yellow-400', 'border-purple-400', 'border-pink-400', 'border-teal-400', 'border-orange-400', 'border-indigo-400'];
 
-                const nuevoProfesor = ref({ nombre: '', etiquetas: [] });
+                watch(listaProfesores, (nuevoValor) => localStorage.setItem('aulaFree_profesores', JSON.stringify(nuevoValor)), { deep: true });
+                watch(listaMaterias, (nuevoValor) => localStorage.setItem('aulaFree_materias', JSON.stringify(nuevoValor)), { deep: true });
+                watch(opcionesEtiquetas, (nuevoValor) => localStorage.setItem('aulaFree_etiquetas', JSON.stringify(nuevoValor)), { deep: true });
+
+                watch(isDark, (nuevoValor) => {
+                    localStorage.setItem('aulaFree_theme', nuevoValor ? 'dark' : 'light');
+                    if (nuevoValor) document.documentElement.classList.add('dark');
+                    else document.documentElement.classList.remove('dark');
+                });
+
+                const nuevoProfesor = ref({ nombre: '', calificacion: 5.0, etiquetas: [] });
                 const nuevaMateria = ref({ clave: '', nombre: '', profesor: '', horarios: [] });
                 const nuevoHorario = ref({ dia: 'Lunes', inicio: '', fin: '' });
 
                 onMounted(() => {
+                    if (isDark.value) document.documentElement.classList.add('dark');
                     let visitas = localStorage.getItem('visitasAulaFree');
                     visitas = visitas ? parseInt(visitas) + 1 : 1;
                     localStorage.setItem('visitasAulaFree', visitas);
@@ -306,11 +499,12 @@
                 });
 
                 const seleccionarVista = (vista) => { vistaActual.value = vista; menuAbierto.value = false; };
-                
-                const toggleDarkMode = () => {
-                    isDark.value = !isDark.value;
-                    if (isDark.value) document.documentElement.classList.add('dark');
-                    else document.documentElement.classList.remove('dark');
+                const toggleDarkMode = () => { isDark.value = !isDark.value; };
+
+                const crearEtiqueta = () => {
+                    const tag = textoNuevaEtiqueta.value.trim();
+                    if (tag !== '' && !opcionesEtiquetas.value.includes(tag)) opcionesEtiquetas.value.push(tag);
+                    textoNuevaEtiqueta.value = '';
                 };
 
                 const toggleEtiquetaProfesor = (etiqueta) => {
@@ -322,15 +516,13 @@
                 const guardarProfesor = () => {
                     if (nuevoProfesor.value.nombre.trim() !== '') {
                         listaProfesores.value.push(JSON.parse(JSON.stringify(nuevoProfesor.value)));
-                        nuevoProfesor.value = { nombre: '', etiquetas: [] };
-                    } else {
-                        alert("Por favor ingresa el nombre del profesor.");
-                    }
+                        nuevoProfesor.value = { nombre: '', calificacion: 5.0, etiquetas: [] };
+                    } else alert("Por favor ingresa el nombre del profesor.");
                 };
 
                 const agregarHorario = () => {
                     if (nuevoHorario.value.inicio && nuevoHorario.value.fin) {
-                        if(parseInt(nuevoHorario.value.inicio) >= parseInt(nuevoHorario.value.fin)){
+                        if (parseInt(nuevoHorario.value.inicio) >= parseInt(nuevoHorario.value.fin)) {
                             alert("La hora de inicio debe ser antes que la hora de fin.");
                             return;
                         }
@@ -343,9 +535,57 @@
                     if (nuevaMateria.value.clave && nuevaMateria.value.nombre && nuevaMateria.value.profesor && nuevaMateria.value.horarios.length > 0) {
                         listaMaterias.value.push(JSON.parse(JSON.stringify(nuevaMateria.value)));
                         nuevaMateria.value = { clave: '', nombre: '', profesor: '', horarios: [] };
-                    } else {
-                        alert("Asegúrate de llenar Clave, Nombre, seleccionar un Profesor y agregar al menos un horario.");
+                    } else alert("Asegúrate de llenar Clave, Nombre, seleccionar un Profesor y agregar al menos un horario.");
+                };
+
+                const obtenerBloquesPorHorario = (horario) => {
+                    let minH = 24;
+                    let maxH = 0;
+                    if (!horario || horario.length === 0) return [];
+                    horario.forEach(clase => {
+                        clase.horarios.forEach(h => {
+                            const start = parseInt(h.inicio.split(':')[0]);
+                            const end = parseInt(h.fin.split(':')[0]);
+                            if (start < minH) minH = start;
+                            if (end > maxH) maxH = end;
+                        });
+                    });
+                    if (minH === 24 || maxH === 0) { minH = 7; maxH = 22; }
+                    const bloques = [];
+                    for (let h = minH; h < maxH; h++) {
+                        bloques.push({
+                            inicio: `${h < 10 ? '0' : ''}${h}:00`,
+                            fin: `${h + 1 < 10 ? '0' : ''}${h + 1}:00`
+                        });
                     }
+                    return bloques;
+                };
+
+                const obtenerClaseEnHora = (horario, dia, horaInicioBloque) => {
+                    for (let clase of horario) {
+                        for (let h of clase.horarios) {
+                            if (h.dia === dia && h.inicio <= horaInicioBloque && h.fin > horaInicioBloque) return clase;
+                        }
+                    }
+                    return null;
+                };
+
+                const esInicioDeClase = (clase, dia, horaInicioBloque) => {
+                    if (!clase) return false;
+                    for (let h of clase.horarios) {
+                        if (h.dia === dia && h.inicio === horaInicioBloque) return true;
+                    }
+                    return false;
+                };
+
+                const obtenerColorClase = (horario, clase) => {
+                    const idx = horario.indexOf(clase);
+                    return paletaClases[idx % paletaClases.length];
+                };
+
+                const obtenerColorBorde = (horario, clase) => {
+                    const idx = horario.indexOf(clase);
+                    return paletaBordes[idx % paletaBordes.length];
                 };
 
                 const horaAMinutos = (horaStr) => {
@@ -362,10 +602,7 @@
                                     const finExistente = horaAMinutos(hExistente.fin);
                                     const inicioNuevo = horaAMinutos(hNuevo.inicio);
                                     const finNuevo = horaAMinutos(hNuevo.fin);
-
-                                    if (inicioNuevo < finExistente && finNuevo > inicioExistente) {
-                                        return true; 
-                                    }
+                                    if (inicioNuevo < finExistente && finNuevo > inicioExistente) return true;
                                 }
                             }
                         }
@@ -381,45 +618,79 @@
                     });
 
                     const grupos = Object.values(materiasAgrupadas);
-                    if (grupos.length === 0) return;
+                    if (grupos.length === 0) {
+                        alert("Agrega materias antes de generar opciones.");
+                        return;
+                    }
+
+                    const MAX_MATERIAS = 7;
+                    const tamanoObjetivo = Math.min(MAX_MATERIAS, grupos.length);
 
                     let combinacionesValidas = [];
 
-                    const combinar = (indiceGrupo, horarioActual) => {
-                        if (indiceGrupo === grupos.length) {
-                            combinacionesValidas.push([...horarioActual]);
-                            return;
-                        }
-                        
-                        const opcionesClase = grupos[indiceGrupo];
-                        for (let opcion of opcionesClase) {
-                            if (!hayEmpalme(horarioActual, opcion)) {
-                                horarioActual.push(opcion);
-                                combinar(indiceGrupo + 1, horarioActual);
-                                horarioActual.pop(); 
+                    const obtenerCombinacionesDeGrupos = (arr, k) => {
+                        const resultados = [];
+                        const helper = (inicio, combo) => {
+                            if (combo.length === k) {
+                                resultados.push([...combo]);
+                                return;
                             }
-                        }
+                            for (let i = inicio; i < arr.length; i++) {
+                                combo.push(arr[i]);
+                                helper(i + 1, combo);
+                                combo.pop();
+                            }
+                        };
+                        helper(0, []);
+                        return resultados;
                     };
 
-                    combinar(0, []);
-                    horariosGenerados.value = combinacionesValidas;
-                    
-                    if(combinacionesValidas.length > 0) {
+                    const combinacionesGrupos = obtenerCombinacionesDeGrupos(grupos, tamanoObjetivo);
+
+                    combinacionesGrupos.forEach(grupoCombo => {
+                        const combinar = (indiceGrupo, horarioActual) => {
+                            if (indiceGrupo === grupoCombo.length) {
+                                combinacionesValidas.push([...horarioActual]);
+                                return;
+                            }
+                            const opcionesClase = grupoCombo[indiceGrupo];
+                            for (let opcion of opcionesClase) {
+                                if (!hayEmpalme(horarioActual, opcion)) {
+                                    horarioActual.push(opcion);
+                                    combinar(indiceGrupo + 1, horarioActual);
+                                    horarioActual.pop();
+                                }
+                            }
+                        };
+                        combinar(0, []);
+                    });
+
+                    if (combinacionesValidas.length > 50) {
+                        alert(`¡Impresionante! Encontramos ${combinacionesValidas.length} horarios posibles. Te mostraremos las primeras 50 opciones para mantener la página rápida.`);
+                        horariosGenerados.value = combinacionesValidas.slice(0, 50);
+                    } else {
+                        horariosGenerados.value = combinacionesValidas;
+                    }
+
+                    if (combinacionesValidas.length > 0) {
                         vistaActual.value = 'resultados';
                     } else {
-                        alert("No se pudo generar ningún horario sin empalmes con las opciones dadas.");
+                        alert(`No se pudo armar ningún horario sin empalmes combinando ${tamanoObjetivo} materias. Revisa tus opciones o elimina alguna que choque.`);
                     }
                 };
 
                 return {
-                    vistaActual, isDark, menuAbierto, contadorVisitas, horasDisponibles,
-                    listaProfesores, listaMaterias, horariosGenerados, opcionesEtiquetas, 
+                    vistaActual, isDark, menuAbierto, contadorVisitas, horasDisponibles, diasSemana,
+                    listaProfesores, listaMaterias, horariosGenerados,
+                    opcionesEtiquetas, textoNuevaEtiqueta,
                     nuevoProfesor, nuevaMateria, nuevoHorario,
-                    seleccionarVista, toggleDarkMode, toggleEtiquetaProfesor, guardarProfesor, 
-                    agregarHorario, guardarMateria, generarOpciones
+                    seleccionarVista, toggleDarkMode, crearEtiqueta, toggleEtiquetaProfesor, guardarProfesor,
+                    agregarHorario, guardarMateria, generarOpciones,
+                    obtenerBloquesPorHorario, obtenerClaseEnHora, esInicioDeClase, obtenerColorClase, obtenerColorBorde
                 }
             }
         }).mount('#app');
     </script>
 </body>
+
 </html>
