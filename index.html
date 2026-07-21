@@ -8,6 +8,7 @@
     <meta name="theme-color" content="#B1CEFA">
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -555,7 +556,22 @@
     </footer>
 
     <script>
+        
         const { createApp, ref, onMounted, watch } = Vue;
+        
+        // Supabase Initialization
+        const supabaseUrl = 'https://oykkvuwnpwpvsohwebeh.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95a2t2dXducHdwdnNvaHdlYmVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5NDg1NzksImV4cCI6MjA5MjUyNDU3OX0.ykspnDgacyXvVj2zm1akeJJtBSuEcZYcMALJIHMyNMY';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        const malasPalabras = ['puto', 'puta', 'pendejo', 'pendeja', 'idiota', 'estupido', 'estupida', 'imbecil', 'mierda', 'cabron', 'cabrona', 'chinga', 'chingar', 'verga', 'culo', 'putazo', 'madre'];
+
+        const contieneMalasPalabras = (texto) => {
+            if (!texto) return false;
+            const words = texto.toLowerCase().split(/[\s\W]+/);
+            return words.some(w => malasPalabras.includes(w));
+        };
+
 
         createApp({
             setup() {
@@ -596,12 +612,22 @@
                 const nuevaMateria = ref({ clave: '', nombre: '', profesor: '', horarios: [] });
                 const nuevoHorario = ref({ dia: 'Lunes', inicio: '', fin: '' });
 
-                onMounted(() => {
+                onMounted(async () => {
                     if (isDark.value) document.documentElement.classList.add('dark');
                     let visitas = localStorage.getItem('visitasAulaFree');
                     visitas = visitas ? parseInt(visitas) + 1 : 1;
                     localStorage.setItem('visitasAulaFree', visitas);
                     contadorVisitas.value = visitas;
+
+                    // Fetch data from Supabase
+                    const { data, error } = await supabase
+                        .from('directorio_profesores')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                    
+                    if (!error && data) {
+                        directorioProfesores.value = data;
+                    }
                 });
 
                 const seleccionarVista = (vista) => { vistaActual.value = vista; menuAbierto.value = false; };
@@ -872,13 +898,12 @@
                 };
 
                 // --- DATOS DEL DIRECTORIO INDEPENDIENTE ---
-                const directorioProfesores = ref(JSON.parse(localStorage.getItem('aulaFree_directorio')) || []);
+                const directorioProfesores = ref([]);
                 const etiquetasDirectorio = ref(JSON.parse(localStorage.getItem('aulaFree_etiquetasDir')) || ['Mucha tarea', 'Bueno', 'Pesado pero fácil', 'Barco', 'Estricto']);
                 const textoNuevaEtiquetaDir = ref('');
                 const nuevoProfeDir = ref({ nombre: '', calificacion: 5.0, etiquetas: [] });
 
-                watch(directorioProfesores, (val) => localStorage.setItem('aulaFree_directorio', JSON.stringify(val)), { deep: true });
-                watch(etiquetasDirectorio, (val) => localStorage.setItem('aulaFree_etiquetasDir', JSON.stringify(val)), { deep: true });
+                                watch(etiquetasDirectorio, (val) => localStorage.setItem('aulaFree_etiquetasDir', JSON.stringify(val)), { deep: true });
 
                 const estandarizarNombre = (texto) => {
                     return texto.trim()
@@ -899,14 +924,32 @@
                     else nuevoProfeDir.value.etiquetas.splice(index, 1);
                 };
 
-                const guardarProfeDir = () => {
+                const guardarProfeDir = async () => {
                     if (nuevoProfeDir.value.nombre.trim() !== '') {
+                        if (contieneMalasPalabras(nuevoProfeDir.value.nombre) || nuevoProfeDir.value.etiquetas.some(e => contieneMalasPalabras(e))) {
+                            alert("Por favor mantén un lenguaje respetuoso. Revisa el nombre o las etiquetas.");
+                            return;
+                        }
+
                         const nombreEstandarizado = estandarizarNombre(nuevoProfeDir.value.nombre);
                         const profeAGuardar = {
-                            ...nuevoProfeDir.value,
-                            nombre: nombreEstandarizado
+                            nombre: nombreEstandarizado,
+                            calificacion: nuevoProfeDir.value.calificacion,
+                            etiquetas: nuevoProfeDir.value.etiquetas
                         };
-                        directorioProfesores.value.push(JSON.parse(JSON.stringify(profeAGuardar)));
+                        
+                        // Optimistic UI Update
+                        directorioProfesores.value.unshift(profeAGuardar);
+
+                        const { error } = await supabase
+                            .from('directorio_profesores')
+                            .insert([profeAGuardar]);
+                            
+                        if (error) {
+                            console.error('Error insertando en Supabase:', error);
+                            alert("Hubo un error al guardar en la base de datos.");
+                        }
+
                         nuevoProfeDir.value = { nombre: '', calificacion: 5.0, etiquetas: [] };
                     } else alert("Por favor ingresa el nombre del profesor.");
                 };
