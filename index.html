@@ -88,22 +88,75 @@
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
-                        <span class="font-extrabold text-2xl tracking-tight">Aula<span
-                                class="text-[#B1CEFA]">Free</span></span>
+                        <svg class="h-12 w-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 110">
+                          <defs>
+                            <linearGradient id="blue" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stop-color="#2563EB"/>
+                              <stop offset="100%" stop-color="#3B82F6"/>
+                            </linearGradient>
+                          </defs>
+                        
+                          <!-- Calendario -->
+                          <rect x="12" y="18" width="56" height="56" rx="10" fill="url(#blue)"/>
+                          <rect x="18" y="30" width="44" height="38" rx="5" fill="#fff"/>
+                        
+                          <!-- Cuadrícula -->
+                          <rect x="23" y="35" width="9" height="9" rx="2" fill="#34D399"/>
+                          <rect x="36" y="35" width="9" height="9" rx="2" fill="#FBBF24"/>
+                          <rect x="49" y="35" width="9" height="9" rx="2" fill="#60A5FA"/>
+                        
+                          <rect x="23" y="48" width="9" height="9" rx="2" fill="#A78BFA"/>
+                          <rect x="36" y="48" width="9" height="9" rx="2" fill="#E5E7EB"/>
+                          <rect x="49" y="48" width="9" height="9" rx="2" fill="#34D399"/>
+                        
+                          <!-- Argollas -->
+                          <rect x="24" y="12" width="5" height="12" rx="2.5" fill="#1E3A8A"/>
+                          <rect x="51" y="12" width="5" height="12" rx="2.5" fill="#1E3A8A"/>
+                        
+                          <!-- Reloj -->
+                          <circle cx="63" cy="63" r="15" fill="#fff" stroke="#1E3A8A" stroke-width="3"/>
+                          <line x1="63" y1="63" x2="63" y2="56" stroke="#1E3A8A" stroke-width="2.5" stroke-linecap="round"/>
+                          <line x1="63" y1="63" x2="69" y2="67" stroke="#1E3A8A" stroke-width="2.5" stroke-linecap="round"/>
+                        
+                          <!-- Texto -->
+                          <text x="90" y="56"
+                                font-family="Inter, Poppins, Arial, sans-serif"
+                                font-size="38"
+                                font-weight="700"
+                                class="fill-slate-900 dark:fill-white">
+                            aula
+                          </text>
+                        
+                          <text x="170" y="56"
+                                font-family="Inter, Poppins, Arial, sans-serif"
+                                font-size="38"
+                                font-weight="700"
+                                fill="#2563EB">
+                            free
+                          </text>
+                        
+                          <text x="91" y="80"
+                                font-family="Inter, Arial, sans-serif"
+                                font-size="10"
+                                letter-spacing="2"
+                                class="fill-slate-500 dark:fill-slate-300">
+                            GENERA TU HORARIO
+                          </text>
+                        </svg>
                     </div>
                     <div class="hidden sm:ml-8 sm:flex sm:space-x-8">
                         <button @click="vistaActual = 'profesores'"
                             :class="vistaActual === 'profesores' ? 'border-[#B1CEFA] text-[#000000] dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'"
                             class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">
-                            1. Profesores</button>
+                            1. Mis Profesores</button>
                         <button @click="vistaActual = 'crear'"
                             :class="vistaActual === 'crear' ? 'border-[#B1CEFA] text-[#000000] dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'"
                             class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">
-                            2. Materias</button>
+                            2. Mis Materias</button>
                         <button @click="vistaActual = 'resultados'"
                             :class="vistaActual === 'resultados' ? 'border-[#B1CEFA] text-[#000000] dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'"
                             class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">
-                             3. Resultados
+                            3. Resultados
                             <span
                                 class="ml-2 bg-[#B1CEFA] text-[#000000] px-2 py-0.5 rounded-full text-xs font-black">{{
                                 horariosGenerados.length }}</span>
@@ -111,19 +164,26 @@
                         <button @click="vistaActual = 'directorio'"
                             :class="vistaActual === 'directorio' ? 'border-[#B1CEFA] text-[#000000] dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'"
                             class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">
-                             4. Profesores
+                            4. Directorio Global
                         </button>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
                     <div class="flex items-center gap-2">
-                        <span class="text-lg"></span>
-                        <button @click="toggleDarkMode" :class="isDark ? 'bg-[#000000]' : 'bg-[#B1CEFA]'"
-                            class="relative inline-flex h-7 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border-2 border-[#000000] dark:border-white">
-                            <span :class="isDark ? 'translate-x-7 bg-[#B1CEFA]' : 'translate-x-1 bg-[#FFFFFF]'"
-                                class="inline-block h-5 w-5 transform rounded-full transition-transform duration-300 shadow"></span>
+                        <button @click="toggleDarkMode" :class="isDark ? 'bg-gray-600 border-gray-500' : 'bg-blue-200 border-[#B1CEFA]'"
+                            class="relative inline-flex h-8 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border-2 overflow-hidden">
+                            <!-- Moon Icon (Visible in Dark Mode on LEFT) -->
+                            <svg class="absolute left-1.5 h-4 w-4 text-white transition-opacity duration-300 z-0" :class="isDark ? 'opacity-100' : 'opacity-0'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clip-rule="evenodd" />
+                            </svg>
+                            <!-- Sun Icon (Visible in Light Mode on RIGHT) -->
+                            <svg class="absolute right-1.5 h-4 w-4 text-yellow-500 transition-opacity duration-300 z-0" :class="isDark ? 'opacity-0' : 'opacity-100'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
+                            </svg>
+                            <!-- Thumb -->
+                            <span :class="isDark ? 'translate-x-6 bg-gray-200' : 'translate-x-1 bg-white'"
+                                class="inline-block h-6 w-6 transform rounded-full transition-transform duration-300 shadow-md z-10 relative"></span>
                         </button>
-                        <span class="text-lg"></span>
                     </div>
                     <div class="flex items-center sm:hidden ml-2">
                         <button @click="menuAbierto = !menuAbierto" class="text-gray-500 focus:outline-none">
@@ -140,34 +200,32 @@
         </div>
         <div v-show="menuAbierto" class="sm:hidden bg-white dark:bg-gray-900 border-t dark:border-gray-700">
             <div class="pt-2 pb-3 space-y-1">
-                <button @click="seleccionarVista('profesores')"
-                    class="block pl-3 pr-4 py-3 text-left w-full font-bold">1. Profesores</button>
-                <button @click="seleccionarVista('crear')" class="block pl-3 pr-4 py-3 text-left w-full font-bold">2.
-                    Materias</button>
-                <button @click="seleccionarVista('resultados')"
-                    class="block pl-3 pr-4 py-3 text-left w-full font-bold">3. Resultados</button>
-                <button @click="seleccionarVista('directorio')"
-                    class="block pl-3 pr-4 py-3 text-left w-full font-bold">4.
-                    Profesores</button>
+                <button @click="seleccionarVista('profesores')" class="block pl-3 pr-4 py-3 text-left w-full font-bold">1. Mis Profesores</button>
+                <button @click="seleccionarVista('crear')" class="block pl-3 pr-4 py-3 text-left w-full font-bold">2. Mis Materias</button>
+                <button @click="seleccionarVista('resultados')" class="block pl-3 pr-4 py-3 text-left w-full font-bold">3. Resultados</button>
+                <button @click="seleccionarVista('directorio')" class="block pl-3 pr-4 py-3 text-left w-full font-bold">4. Directorio Global</button>
             </div>
         </div>
     </nav>
 
     <main class="max-w-6xl mx-auto p-6 mt-4 flex-grow w-full">
 
-        <!-- Guía de uso rápida -->
-        <div class="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-[#B1CEFA] p-4 mb-6 rounded-r-lg shadow-sm">
-            <h3 class="font-bold text-lg mb-2 text-[#000000] dark:text-white">Guía Rápida de Uso:</h3>
-            <ol class="list-decimal list-inside space-y-1 text-sm text-gray-700 dark:text-gray-300">
-                <li><span class="font-bold text-black dark:text-white">Profesores:</span> Registra a los docentes y ponles calificación.</li>
-                <li><span class="font-bold text-black dark:text-white">Materias:</span> Crea tus materias asignando los profesores previamente registrados y definiendo sus horarios.</li>
-                <li><span class="font-bold text-black dark:text-white">Resultados:</span> Presiona "Generar" (dentro de Materias) y aquí verás tus opciones viables de horarios sin empalmes.</li>
-                <li><span class="font-bold text-black dark:text-white">Exportar:</span> Podrás descargar el horario en PNG o PDF desde la sección de Resultados.</li>
-            </ol>
+        <!-- Filtro Plantel -->
+        <div class="bg-white dark:bg-gray-800 p-4 mb-6 rounded-lg shadow-sm border-2 border-[#B1CEFA] flex flex-col md:flex-row items-center gap-4">
+            <div class="w-full md:w-1/3">
+                <label class="block text-sm font-bold mb-1 text-gray-700 dark:text-gray-300">Tu Plantel / Escuela</label>
+                <input v-model="plantelActual" type="text" placeholder="Ej. ESCOM, FES Aragón, UPIITA..." class="w-full border-2 border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#B1CEFA] focus:border-[#B1CEFA] dark:bg-gray-700 dark:border-gray-600 outline-none font-bold">
+            </div>
+            <div class="w-full md:w-2/3 text-sm text-gray-600 dark:text-gray-400">
+                <p><strong>Paso 1:</strong> Escribe tu plantel. El Directorio Global cargará a los profesores de tu escuela.</p>
+                <p><strong>Paso 2:</strong> Ve a "Mis Materias" para armar tus clases y genera tus horarios.</p>
+            </div>
         </div>
 
 
-        <div v-if="vistaActual === 'profesores'" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+
+                <div v-if="vistaActual === 'profesores'" class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="bg-gray-50 dark:bg-gray-800 border-2 border-[#B1CEFA] rounded-xl p-6 shadow-sm">
                 <h2 class="text-xl font-bold mb-4">Agregar Profesor</h2>
                 <div class="space-y-6">
@@ -206,12 +264,12 @@
                     </div>
                     <button @click="guardarProfesor"
                         class="w-full bg-[#B1CEFA] text-[#000000] font-black py-4 rounded-lg mt-4 hover:bg-blue-300 transition-colors shadow-md border-2 border-[#000000]">+
-                        Guardar Profesor en Directorio</button>
+                        Guardar Mis Profesores</button>
                 </div>
             </div>
 
             <div>
-                <h2 class="text-xl font-bold mb-4">Directorio de Profesores ({{ listaProfesores.length }})</h2>
+                <h2 class="text-xl font-bold mb-4">Mis Profesores ({{ listaProfesores.length }})</h2>
                 <div v-if="listaProfesores.length === 0"
                     class="text-gray-400 italic text-sm bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-dashed border-gray-300">
                     Aún no hay profesores. Agrega uno en el panel izquierdo.</div>
@@ -238,7 +296,7 @@
             </div>
         </div>
 
-        <div v-if="vistaActual === 'crear'" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div v-if="vistaActual === 'crear'" class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="bg-gray-50 dark:bg-gray-800 border-2 border-[#B1CEFA] rounded-xl p-6 shadow-sm">
                 <h2 class="text-xl font-bold mb-2">Crear Opción de Materia</h2>
                 <div class="space-y-4">
@@ -261,11 +319,9 @@
                         <select v-model="nuevaMateria.profesor"
                             class="w-full border-2 border-gray-300 rounded p-2 dark:bg-gray-700 dark:border-gray-600 outline-none focus:ring-2 focus:ring-[#B1CEFA] focus:border-[#B1CEFA]">
                             <option value="" disabled>Selecciona un profesor...</option>
-                            <option v-for="prof in listaProfesores" :value="prof">{{ prof.nombre }} ({{
-                                prof.calificacion }})</option>
+                            <option v-for="prof in listaProfesores" :value="prof">{{ prof.nombre }} ({{ prof.calificacion }})</option>
                         </select>
-                        <p v-if="listaProfesores.length === 0" class="text-xs text-red-500 mt-1 font-bold"> Primero
-                            agrega profesores en la pestaña "1. Profesores".</p>
+                        <p v-if="listaProfesores.length === 0" class="text-xs text-red-500 mt-1 font-bold"> Primero agrega profesores en la pestaña "1. Mis Profesores".</p>
                     </div>
                     <hr class="border-[#B1CEFA] my-4 border-t-2">
                     <div>
@@ -562,7 +618,7 @@
         // Supabase Initialization
         const supabaseUrl = 'https://oykkvuwnpwpvsohwebeh.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95a2t2dXducHdwdnNvaHdlYmVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5NDg1NzksImV4cCI6MjA5MjUyNDU3OX0.ykspnDgacyXvVj2zm1akeJJtBSuEcZYcMALJIHMyNMY';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         const malasPalabras = ['puto', 'puta', 'pendejo', 'pendeja', 'idiota', 'estupido', 'estupida', 'imbecil', 'mierda', 'cabron', 'cabrona', 'chinga', 'chingar', 'verga', 'culo', 'putazo', 'madre'];
 
@@ -578,10 +634,10 @@
                 const vistaActual = ref('profesores');
                 const isDark = ref(localStorage.getItem('aulaFree_theme') === 'dark');
                 const menuAbierto = ref(false);
+                const plantelActual = ref(localStorage.getItem('aulaFree_plantel') || '');
                 const contadorVisitas = ref(0);
 
-                const listaProfesores = ref(JSON.parse(localStorage.getItem('aulaFree_profesores')) || []);
-                const listaMaterias = ref(JSON.parse(localStorage.getItem('aulaFree_materias')) || []);
+                                const listaMaterias = ref(JSON.parse(localStorage.getItem('aulaFree_materias')) || []);
                 const horariosGenerados = ref([]);
 
                 const etiquetasPorDefecto = ['Mucha tarea', 'Bueno', 'Pesado pero fácil', 'Barco', 'Estricto'];
@@ -598,8 +654,7 @@
                 const paletaClases = ['bg-[#B1CEFA]', 'bg-green-200', 'bg-yellow-200', 'bg-purple-200', 'bg-pink-200', 'bg-teal-200', 'bg-orange-200', 'bg-indigo-200'];
                 const paletaBordes = ['border-[#B1CEFA]', 'border-green-400', 'border-yellow-400', 'border-purple-400', 'border-pink-400', 'border-teal-400', 'border-orange-400', 'border-indigo-400'];
 
-                watch(listaProfesores, (nuevoValor) => localStorage.setItem('aulaFree_profesores', JSON.stringify(nuevoValor)), { deep: true });
-                watch(listaMaterias, (nuevoValor) => localStorage.setItem('aulaFree_materias', JSON.stringify(nuevoValor)), { deep: true });
+                                watch(listaMaterias, (nuevoValor) => localStorage.setItem('aulaFree_materias', JSON.stringify(nuevoValor)), { deep: true });
                 watch(opcionesEtiquetas, (nuevoValor) => localStorage.setItem('aulaFree_etiquetas', JSON.stringify(nuevoValor)), { deep: true });
 
                 watch(isDark, (nuevoValor) => {
@@ -608,8 +663,7 @@
                     else document.documentElement.classList.remove('dark');
                 });
 
-                const nuevoProfesor = ref({ nombre: '', calificacion: 5.0, etiquetas: [] });
-                const nuevaMateria = ref({ clave: '', nombre: '', profesor: '', horarios: [] });
+                                const nuevaMateria = ref({ clave: '', nombre: '', profesor: '', horarios: [] });
                 const nuevoHorario = ref({ dia: 'Lunes', inicio: '', fin: '' });
 
                 onMounted(async () => {
@@ -619,16 +673,37 @@
                     localStorage.setItem('visitasAulaFree', visitas);
                     contadorVisitas.value = visitas;
 
-                    // Fetch data from Supabase
-                    const { data, error } = await supabase
+                    cargarProfesores();
+                });
+                
+                const cargarProfesores = async () => {
+                    const p = plantelActual.value.trim().toLowerCase();
+                    if (!p) {
+                        directorioProfesores.value = [];
+                        return;
+                    }
+                    const { data, error } = await supabaseClient
                         .from('directorio_profesores')
                         .select('*')
+                        .eq('plantel', p)
                         .order('created_at', { ascending: false });
                     
                     if (!error && data) {
                         directorioProfesores.value = data;
                     }
+                };
+
+                watch(plantelActual, (nuevoValor) => {
+                    localStorage.setItem('aulaFree_plantel', nuevoValor);
+                    cargarProfesores();
                 });
+
+                
+                const listaProfesores = ref(JSON.parse(localStorage.getItem('aulaFree_profesores')) || []);
+                watch(listaProfesores, (nuevoValor) => localStorage.setItem('aulaFree_profesores', JSON.stringify(nuevoValor)), { deep: true });
+                const nuevoProfesor = ref({ nombre: '', calificacion: 5.0, etiquetas: [] });
+
+
 
                 const seleccionarVista = (vista) => { vistaActual.value = vista; menuAbierto.value = false; };
                 const toggleDarkMode = () => { isDark.value = !isDark.value; };
@@ -932,16 +1007,22 @@
                         }
 
                         const nombreEstandarizado = estandarizarNombre(nuevoProfeDir.value.nombre);
+                        const p = plantelActual.value.trim().toLowerCase();
+                        if (!p) {
+                            alert("Por favor, escribe tu plantel en la parte superior antes de registrar profesores.");
+                            return;
+                        }
                         const profeAGuardar = {
                             nombre: nombreEstandarizado,
                             calificacion: nuevoProfeDir.value.calificacion,
-                            etiquetas: nuevoProfeDir.value.etiquetas
+                            etiquetas: nuevoProfeDir.value.etiquetas,
+                            plantel: p
                         };
                         
                         // Optimistic UI Update
                         directorioProfesores.value.unshift(profeAGuardar);
 
-                        const { error } = await supabase
+                        const { error } = await supabaseClient
                             .from('directorio_profesores')
                             .insert([profeAGuardar]);
                             
@@ -958,8 +1039,8 @@
                     vistaActual, isDark, menuAbierto, contadorVisitas, horasDisponibles, diasSemana,
                     listaProfesores, listaMaterias, horariosGenerados,
                     opcionesEtiquetas, textoNuevaEtiqueta,
-                    nuevoProfesor, nuevaMateria, nuevoHorario,
-                    seleccionarVista, toggleDarkMode, crearEtiqueta, toggleEtiquetaProfesor, guardarProfesor,
+                    nuevoProfesor, nuevaMateria, nuevoHorario, plantelActual,
+                    seleccionarVista, toggleDarkMode, crearEtiqueta, toggleEtiquetaProfesor, guardarProfesor, 
                     agregarHorario, guardarMateria, generarOpciones,
                     obtenerBloquesPorHorario, obtenerClaseEnHora, esInicioDeClase, obtenerColorClase, obtenerColorBorde,
                     descargarHorario, debeRenderizarCelda, obtenerRowspan,
