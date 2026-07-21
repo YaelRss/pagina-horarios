@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AulaFree - Generador de Horarios</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="theme-color" content="#B1CEFA">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -211,14 +212,13 @@
     <main class="max-w-6xl mx-auto p-6 mt-4 flex-grow w-full">
 
         <!-- Filtro Plantel -->
-        <div class="bg-white dark:bg-gray-800 p-4 mb-6 rounded-lg shadow-sm border-2 border-[#B1CEFA] flex flex-col md:flex-row items-center gap-4">
+        <div v-if="vistaActual === 'directorio'" class="bg-white dark:bg-gray-800 p-4 mb-6 rounded-lg shadow-sm border-2 border-[#B1CEFA] flex flex-col md:flex-row items-center gap-4">
             <div class="w-full md:w-1/3">
                 <label class="block text-sm font-bold mb-1 text-gray-700 dark:text-gray-300">Tu Plantel / Escuela</label>
                 <input v-model="plantelActual" type="text" placeholder="Ej. ESCOM, FES Aragón, UPIITA..." class="w-full border-2 border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#B1CEFA] focus:border-[#B1CEFA] dark:bg-gray-700 dark:border-gray-600 outline-none font-bold">
             </div>
             <div class="w-full md:w-2/3 text-sm text-gray-600 dark:text-gray-400">
-                <p><strong>Paso 1:</strong> Escribe tu plantel. El Directorio Global cargará a los profesores de tu escuela.</p>
-                <p><strong>Paso 2:</strong> Ve a "Mis Materias" para armar tus clases y genera tus horarios.</p>
+                <p><strong>Para usar el Directorio:</strong> Escribe tu escuela arriba. Solo se mostrarán los profesores registrados por otros alumnos de tu mismo plantel.</p>
             </div>
         </div>
 
@@ -668,10 +668,21 @@
 
                 onMounted(async () => {
                     if (isDark.value) document.documentElement.classList.add('dark');
-                    let visitas = localStorage.getItem('visitasAulaFree');
-                    visitas = visitas ? parseInt(visitas) + 1 : 1;
-                    localStorage.setItem('visitasAulaFree', visitas);
-                    contadorVisitas.value = visitas;
+                    
+                    // Contador global con Supabase
+                    try {
+                        const { data, error } = await supabaseClient.rpc('incrementar_visita');
+                        if (!error && data !== null) {
+                            contadorVisitas.value = data;
+                        } else {
+                            // Fallback local si hay error
+                            let visitas = localStorage.getItem('visitasAulaFree') || 0;
+                            contadorVisitas.value = parseInt(visitas) + 1;
+                            localStorage.setItem('visitasAulaFree', contadorVisitas.value);
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
 
                     cargarProfesores();
                 });
