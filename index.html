@@ -10,7 +10,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 
@@ -94,16 +93,16 @@
                     <div class="hidden sm:ml-8 sm:flex sm:space-x-8">
                         <button @click="vistaActual = 'profesores'"
                             :class="vistaActual === 'profesores' ? 'border-[#B1CEFA] text-[#000000] dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'"
-                            class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">🧑‍🏫
+                            class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">
                             1. Profesores</button>
                         <button @click="vistaActual = 'crear'"
                             :class="vistaActual === 'crear' ? 'border-[#B1CEFA] text-[#000000] dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'"
-                            class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">📚
+                            class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">
                             2. Materias</button>
                         <button @click="vistaActual = 'resultados'"
                             :class="vistaActual === 'resultados' ? 'border-[#B1CEFA] text-[#000000] dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'"
                             class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">
-                            🗓️ 3. Resultados
+                             3. Resultados
                             <span
                                 class="ml-2 bg-[#B1CEFA] text-[#000000] px-2 py-0.5 rounded-full text-xs font-black">{{
                                 horariosGenerados.length }}</span>
@@ -111,19 +110,19 @@
                         <button @click="vistaActual = 'directorio'"
                             :class="vistaActual === 'directorio' ? 'border-[#B1CEFA] text-[#000000] dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-300'"
                             class="inline-flex items-center px-1 pt-1 border-b-4 font-bold text-sm transition-colors">
-                            📖 4. Profesores
+                             4. Profesores
                         </button>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
                     <div class="flex items-center gap-2">
-                        <span class="text-lg">☀️</span>
+                        <span class="text-lg"></span>
                         <button @click="toggleDarkMode" :class="isDark ? 'bg-[#000000]' : 'bg-[#B1CEFA]'"
                             class="relative inline-flex h-7 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border-2 border-[#000000] dark:border-white">
                             <span :class="isDark ? 'translate-x-7 bg-[#B1CEFA]' : 'translate-x-1 bg-[#FFFFFF]'"
                                 class="inline-block h-5 w-5 transform rounded-full transition-transform duration-300 shadow"></span>
                         </button>
-                        <span class="text-lg">🌙</span>
+                        <span class="text-lg"></span>
                     </div>
                     <div class="flex items-center sm:hidden ml-2">
                         <button @click="menuAbierto = !menuAbierto" class="text-gray-500 focus:outline-none">
@@ -155,6 +154,18 @@
 
     <main class="max-w-6xl mx-auto p-6 mt-4 flex-grow w-full">
 
+        <!-- Guía de uso rápida -->
+        <div class="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-[#B1CEFA] p-4 mb-6 rounded-r-lg shadow-sm">
+            <h3 class="font-bold text-lg mb-2 text-[#000000] dark:text-white">Guía Rápida de Uso:</h3>
+            <ol class="list-decimal list-inside space-y-1 text-sm text-gray-700 dark:text-gray-300">
+                <li><span class="font-bold text-black dark:text-white">Profesores:</span> Registra a los docentes y ponles calificación.</li>
+                <li><span class="font-bold text-black dark:text-white">Materias:</span> Crea tus materias asignando los profesores previamente registrados y definiendo sus horarios.</li>
+                <li><span class="font-bold text-black dark:text-white">Resultados:</span> Presiona "Generar" (dentro de Materias) y aquí verás tus opciones viables de horarios sin empalmes.</li>
+                <li><span class="font-bold text-black dark:text-white">Exportar:</span> Podrás descargar el horario en PNG o PDF desde la sección de Resultados.</li>
+            </ol>
+        </div>
+
+
         <div v-if="vistaActual === 'profesores'" class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="bg-gray-50 dark:bg-gray-800 border-2 border-[#B1CEFA] rounded-xl p-6 shadow-sm">
                 <h2 class="text-xl font-bold mb-4">Agregar Profesor</h2>
@@ -170,7 +181,7 @@
                         <label class="flex justify-between items-center mb-3">
                             <span class="text-sm font-semibold">Calificación general:</span>
                             <span
-                                class="text-[#000000] dark:text-white font-black text-xl bg-[#B1CEFA] px-3 py-1 rounded-full border border-[#000000]">⭐
+                                class="text-[#000000] dark:text-white font-black text-xl bg-[#B1CEFA] px-3 py-1 rounded-full border border-[#000000]">
                                 {{ nuevoProfesor.calificacion }} / 10</span>
                         </label>
                         <input v-model.number="nuevoProfesor.calificacion" type="range" min="0" max="10" step="0.1">
@@ -210,7 +221,7 @@
                         <div class="pr-6">
                             <div class="flex items-center gap-2">
                                 <p class="font-bold text-sm">{{ prof.nombre }}</p>
-                                <span class="text-xs font-black text-yellow-600 dark:text-yellow-400">⭐ {{
+                                <span class="text-xs font-black text-yellow-600 dark:text-yellow-400"> {{
                                     prof.calificacion }}</span>
                             </div>
                             <div class="flex gap-1 mt-1 flex-wrap">
@@ -249,10 +260,10 @@
                         <select v-model="nuevaMateria.profesor"
                             class="w-full border-2 border-gray-300 rounded p-2 dark:bg-gray-700 dark:border-gray-600 outline-none focus:ring-2 focus:ring-[#B1CEFA] focus:border-[#B1CEFA]">
                             <option value="" disabled>Selecciona un profesor...</option>
-                            <option v-for="prof in listaProfesores" :value="prof">{{ prof.nombre }} (⭐{{
+                            <option v-for="prof in listaProfesores" :value="prof">{{ prof.nombre }} ({{
                                 prof.calificacion }})</option>
                         </select>
-                        <p v-if="listaProfesores.length === 0" class="text-xs text-red-500 mt-1 font-bold">⚠️ Primero
+                        <p v-if="listaProfesores.length === 0" class="text-xs text-red-500 mt-1 font-bold"> Primero
                             agrega profesores en la pestaña "1. Profesores".</p>
                     </div>
                     <hr class="border-[#B1CEFA] my-4 border-t-2">
@@ -286,7 +297,7 @@
                         <ul class="text-sm space-y-2">
                             <li v-for="(h, index) in nuevaMateria.horarios" :key="index"
                                 class="bg-white dark:bg-gray-700 border-2 border-green-500 dark:border-green-600 rounded p-2 flex justify-between items-center shadow-sm">
-                                <span class="font-bold text-green-700 dark:text-green-400">✅ {{ h.dia }}: {{ h.inicio }}
+                                <span class="font-bold text-green-700 dark:text-green-400"> {{ h.dia }}: {{ h.inicio }}
                                     - {{ h.fin }}</span>
                                 <button @click="nuevaMateria.horarios.splice(index, 1)"
                                     class="text-red-500 hover:bg-red-50 dark:hover:bg-gray-600 rounded-full w-6 h-6 flex items-center justify-center font-bold transition-colors">✕</button>
@@ -305,7 +316,7 @@
                     <h2 class="text-xl font-bold">Banco de Opciones ({{ listaMaterias.length }})</h2>
                     <button v-if="listaMaterias.length > 0" @click="generarOpciones"
                         class="bg-[#B1CEFA] text-[#000000] font-black text-sm px-4 py-2 rounded-lg shadow-md hover:bg-blue-300 border-2 border-[#000000] transform hover:-translate-y-0.5 transition-all w-full sm:w-auto">
-                        ⚡ GENERAR
+                         GENERAR
                     </button>
                 </div>
 
@@ -319,8 +330,8 @@
                         <div class="flex-grow pr-6">
                             <h3 class="font-bold text-sm text-[#B1CEFA]">{{ materia.clave }} <span
                                     class="text-[#000000] dark:text-white">- {{ materia.nombre }}</span></h3>
-                            <p class="text-xs font-bold text-gray-600 dark:text-gray-400 mt-0.5">🧑‍🏫 {{
-                                materia.profesor.nombre }} <span class="text-yellow-600 dark:text-yellow-400">⭐{{
+                            <p class="text-xs font-bold text-gray-600 dark:text-gray-400 mt-0.5"> {{
+                                materia.profesor.nombre }} <span class="text-yellow-600 dark:text-yellow-400">{{
                                     materia.profesor.calificacion }}</span></p>
                         </div>
 
@@ -341,7 +352,7 @@
         <div v-if="vistaActual === 'resultados'">
             <div v-if="horariosGenerados.length === 0"
                 class="text-center py-16 px-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border-2 border-dashed border-[#B1CEFA]">
-                <div class="text-6xl mb-4">🗓️</div>
+                <div class="text-6xl mb-4"></div>
                 <h2 class="text-2xl font-bold mb-2">Aún no hay horarios</h2>
                 <p class="text-gray-500">Agrega materias en la pestaña anterior y presiona Generar.</p>
             </div>
@@ -367,11 +378,11 @@
                         <div class="flex gap-2">
                             <button @click="descargarHorario(index, 'png')"
                                 class="bg-black text-white px-4 py-2 rounded-lg font-bold text-sm shadow hover:opacity-80 transition flex items-center gap-2">
-                                🖼️ PNG
+                                 PNG
                             </button>
                             <button @click="descargarHorario(index, 'pdf')"
                                 class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-sm shadow hover:opacity-80 transition flex items-center gap-2">
-                                📄 PDF
+                                 PDF
                             </button>
                         </div>
                     </div>
@@ -423,7 +434,7 @@
                         </div>
 
                         <div class="mt-8">
-                            <h3 class="text-lg font-black mb-4 border-b-2 border-gray-100 dark:border-gray-700 pb-2">📚
+                            <h3 class="text-lg font-black mb-4 border-b-2 border-gray-100 dark:border-gray-700 pb-2">
                                 Detalles de las Clases ({{ horario.length }})</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <div v-for="clase in horario"
@@ -432,8 +443,8 @@
                                     <h4 class="font-black text-lg">{{ clase.clave }} <span
                                             class="text-gray-700 dark:text-gray-300 text-sm font-normal">- {{
                                             clase.nombre }}</span></h4>
-                                    <p class="text-sm font-bold mt-2">🧑‍🏫 {{ clase.profesor.nombre }} <span
-                                            class="text-yellow-600 dark:text-yellow-400">⭐{{ clase.profesor.calificacion
+                                    <p class="text-sm font-bold mt-2"> {{ clase.profesor.nombre }} <span
+                                            class="text-yellow-600 dark:text-yellow-400">{{ clase.profesor.calificacion
                                             }}</span></p>
                                     <div class="flex gap-1 mt-2 flex-wrap">
                                         <span v-for="tag in clase.profesor.etiquetas"
@@ -466,7 +477,7 @@
                         <label class="flex justify-between items-center mb-3">
                             <span class="text-sm font-semibold">Calificación general:</span>
                             <span
-                                class="text-[#000000] dark:text-white font-black text-xl bg-[#B1CEFA] px-3 py-1 rounded-full border border-[#000000]">⭐
+                                class="text-[#000000] dark:text-white font-black text-xl bg-[#B1CEFA] px-3 py-1 rounded-full border border-[#000000]">
                                 {{ nuevoProfeDir.calificacion }} / 10</span>
                         </label>
                         <input v-model.number="nuevoProfeDir.calificacion" type="range" min="0" max="10" step="0.1">
@@ -512,7 +523,7 @@
                             <p class="font-bold text-xl">{{ prof.nombre }}</p>
                             <div
                                 class="flex items-center gap-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-black border-2 border-yellow-300 dark:border-yellow-700 shadow-sm">
-                                ⭐ {{ prof.calificacion }}</div>
+                                 {{ prof.calificacion }}</div>
                         </div>
                         <div class="flex gap-1.5 flex-wrap">
                             <span v-for="tag in prof.etiquetas"
@@ -535,7 +546,7 @@
             </div>
             <div
                 class="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 px-4 py-2 rounded-full border-2 border-gray-200 dark:border-gray-700">
-                <span class="font-bold">👁️ Visitas:</span>
+                <span class="font-bold"> Visitas:</span>
                 <span
                     class="font-black text-[#000000] dark:text-white bg-[#B1CEFA] px-3 py-0.5 rounded-full border border-[#000000]">{{
                     contadorVisitas }}</span>
@@ -548,7 +559,7 @@
 
         createApp({
             setup() {
-                const vistaActual = ref('crear');
+                const vistaActual = ref('profesores');
                 const isDark = ref(localStorage.getItem('aulaFree_theme') === 'dark');
                 const menuAbierto = ref(false);
                 const contadorVisitas = ref(0);
